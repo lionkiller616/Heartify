@@ -1,4 +1,5 @@
-# ❤️ Heartify --- Valentine Card Creator
+# ❤️ Heartify 
+## Valentine Card Creator
 
 Heartify is a **modern, emotion-driven Valentine's Day card creator**
 built with pure **HTML, CSS, and JavaScript**.\
