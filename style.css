@@ -1,0 +1,778 @@
+/* * ======================================================================================
+ * HEARTIFY DESIGN SYSTEM (V5.1 - TITANIUM EDITION)
+ * ARCHITECT: Senior UI/UX Engineer
+ * DATE: 2026-05-21
+ * UPDATES: Split Architecture - Core Layout & Editor Styles
+ * ======================================================================================
+ * * [TABLE OF CONTENTS]
+ * --------------------------------------------------------------------------------------
+ * 1.0  DESIGN TOKENS (ROOT VARIABLES)
+ * 2.0  RESET & NORMALIZATION
+ * 3.0  UTILITY FRAMEWORK
+ * 4.0  GLOBAL LAYOUT ARCHITECTURE
+ * 5.0  COMPONENT: SIDEBAR (THE COCKPIT)
+ * 6.0  COMPONENT: FORM ELEMENTS
+ * 7.0  COMPONENT: BUTTONS & ACTIONS
+ * 8.0  COMPONENT: FEEDBACK SYSTEM
+ * 9.0  MOBILE RESPONSIVENESS (VIEW SWITCHER)
+ * 10.0 DARK MODE OVERRIDES (THEME: MIDNIGHT)
+ * ======================================================================================
+ */
+
+/* ======================================================================================
+   1.0 DESIGN TOKENS (ROOT VARIABLES)
+   ====================================================================================== */
+:root {
+    /* --- 1.1 COLOR PALETTE: NEUTRAL (INTER UI SLATE) --- */
+    --slate-025: #fcfcfd;
+    --slate-050: #f8fafc;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-300: #cbd5e1;
+    --slate-400: #94a3b8;
+    --slate-500: #64748b;
+    --slate-600: #475569;
+    --slate-700: #334155;
+    --slate-800: #1e293b;
+    --slate-900: #0f172a;
+    --slate-950: #020617; /* Void Black */
+
+    /* --- 1.1 COLOR PALETTE: BRAND (LUMINOUS ROSE) --- */
+    --brand-050: #fff1f2;
+    --brand-100: #ffe4e6;
+    --brand-200: #fecdd3;
+    --brand-300: #fda4af;
+    --brand-400: #fb7185;
+    --brand-500: #f43f5e; /* Main Brand Color */
+    --brand-600: #e11d48;
+    --brand-700: #be123c;
+    --brand-800: #9f1239;
+    --brand-900: #881337;
+    --brand-950: #4c0519;
+
+    /* --- 1.2 SEMANTIC ALIASES (LIGHT THEME DEFAULT) --- */
+    --bg-app:      #f2f5f8; /* Complex cool grey-blue tint */
+    --bg-surface:  rgba(255, 255, 255, 0.85);
+    --bg-glass:    rgba(255, 255, 255, 0.65);
+    --bg-panel:    #ffffff;
+    --bg-input:    rgba(255, 255, 255, 0.5);
+
+    --text-primary:   var(--slate-900);
+    --text-secondary: var(--slate-600);
+    --text-tertiary:  var(--slate-400);
+    --text-inverse:   #ffffff;
+    --text-brand:     var(--brand-600);
+
+    --border-light:   rgba(255, 255, 255, 0.6);
+    --border-base:    rgba(148, 163, 184, 0.25);
+    --border-focus:   var(--brand-400);
+
+    /* --- 1.3 ELEVATION (CINEMATIC LIGHTING) --- */
+    /* Level 0: Flat */
+    --shadow-none: none;
+    /* Level 1: Subtle Component separation */
+    --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+    /* Level 2: Interactive Elements */
+    --shadow-sm: 
+        0 1px 3px 0 rgba(15, 23, 42, 0.08), 
+        0 1px 2px -1px rgba(15, 23, 42, 0.04);
+    /* Level 3: Cards & Panels */
+    --shadow-md: 
+        0 4px 6px -1px rgba(15, 23, 42, 0.08), 
+        0 2px 4px -2px rgba(15, 23, 42, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    /* Level 4: Floating Modals */
+    --shadow-lg: 
+        0 10px 15px -3px rgba(15, 23, 42, 0.08), 
+        0 4px 6px -4px rgba(15, 23, 42, 0.04);
+    /* Level 5: The Hero Artifact (Colored Shadows) - MOVED TO CARDS.CSS BUT KEPT FOR REFERENCE */
+    --shadow-hero: 
+        0 25px 50px -12px rgba(15, 23, 42, 0.25),
+        0 0 0 1px rgba(15, 23, 42, 0.02);
+    /* Special: Brand Glow */
+    --glow-brand: 0 0 20px rgba(244, 63, 94, 0.35);
+
+    /* --- 1.4 MOTION PHYSICS (SPRING CURVES) --- */
+    --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy */
+    --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);       /* Smooth Stop */
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);         /* Standard */
+    
+    --dur-fast: 200ms;
+    --dur-normal: 350ms;
+    --dur-slow: 600ms;
+
+    /* --- 1.5 SPACING & LAYOUT --- */
+    --header-h: 68px; /* Slightly reduced for better proportion */
+    --sidebar-w: 440px;
+    
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+
+    /* --- 1.6 BORDERS & RADIUS --- */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1.25rem;
+    --radius-xl: 1.5rem;
+    --radius-full: 9999px;
+
+    /* --- FONTS --- */
+    --font-sans: 'Lato', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-display: 'Montserrat', system-ui, sans-serif;
+}
+
+/* ======================================================================================
+   2.0 RESET & NORMALIZATION
+   ====================================================================================== */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    border-style: solid;
+    border-color: var(--slate-200);
+}
+
+html {
+    font-size: 15px; /* SCALED DOWN from 16px to effectively reduce overall size */
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    -moz-tab-size: 4;
+    tab-size: 4;
+    scroll-behavior: smooth;
+    height: 100%;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-app);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    
+    /* Mesh Gradient Background */
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(225, 29, 72, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(124, 58, 237, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(244, 63, 94, 0.08) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(56, 189, 248, 0.08) 0px, transparent 50%);
+    background-attachment: fixed;
+    background-size: cover;
+    
+    /* CRITICAL: Mobile Scroll Fix */
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { 
+    background: var(--slate-300); 
+    border-radius: var(--radius-full); 
+}
+::-webkit-scrollbar-thumb:hover { background: var(--slate-400); }
+
+/* Accessibility Focus Rings */
+:focus-visible {
+    outline: 2px solid var(--brand-500);
+    outline-offset: 2px;
+}
+
+/* Image Resets */
+img, svg, video, canvas, audio, iframe, embed, object {
+    display: block;
+    vertical-align: middle;
+    max-width: 100%;
+}
+
+/* ======================================================================================
+   3.0 UTILITY FRAMEWORK (MINI-ENGINE)
+   ====================================================================================== */
+/* 3.1 Layout Utilities */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-row { flex-direction: row; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.flex-1 { flex: 1 1 0%; }
+.shrink-0 { flex-shrink: 0; }
+.grow { flex-grow: 1; }
+.gap-1 { gap: var(--space-1); }
+.gap-2 { gap: var(--space-2); }
+.gap-4 { gap: var(--space-4); }
+
+.grid { display: grid; }
+.grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* 3.2 Spacing Utilities */
+.p-0 { padding: 0; }
+.p-4 { padding: var(--space-4); }
+.p-6 { padding: var(--space-6); }
+.px-4 { padding-left: var(--space-4); padding-right: var(--space-4); }
+.py-2 { padding-top: var(--space-2); padding-bottom: var(--space-2); }
+.m-0 { margin: 0; }
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-4 { margin-bottom: var(--space-4); }
+
+/* 3.3 Typography Utilities */
+.text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+.text-base { font-size: 1rem; line-height: 1.5rem; }
+.text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+.font-bold { font-weight: 700; }
+.font-medium { font-weight: 500; }
+.text-center { text-align: center; }
+.uppercase { text-transform: uppercase; }
+.tracking-wide { letter-spacing: 0.025em; }
+
+/* 3.4 Color Utilities */
+.text-brand { color: var(--text-brand); }
+.text-mute { color: var(--text-tertiary); }
+.bg-white { background-color: white; }
+
+/* 3.5 Visibility */
+.hidden { display: none !important; }
+.block { display: block; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+.sticky { position: sticky; }
+
+/* ======================================================================================
+   4.0 GLOBAL LAYOUT ARCHITECTURE
+   ====================================================================================== */
+.app-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden; /* Locked on Desktop */
+    position: relative;
+    isolation: isolate;
+}
+
+/* ======================================================================================
+   5.0 COMPONENT: SIDEBAR (THE COCKPIT)
+   ====================================================================================== */
+.sidebar {
+    width: var(--sidebar-w);
+    height: 100%;
+    background: var(--bg-glass);
+    
+    /* Advanced Blur Composition */
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    
+    border-right: 1px solid var(--border-glass);
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+    position: relative;
+    box-shadow: 
+        10px 0 30px -10px rgba(0,0,0,0.05),
+        inset 1px 0 0 rgba(255,255,255,0.2);
+    
+    /* Physics Transition */
+    transition: transform var(--dur-normal) var(--ease-spring);
+}
+
+/* 5.2 Sticky Header Logic */
+.sidebar-header {
+    height: var(--header-h);
+    padding: 0 var(--space-6);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.4);
+    border-bottom: 1px solid var(--border-base);
+    flex-shrink: 0;
+    z-index: 20;
+}
+
+.brand-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--brand-600), var(--brand-400));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 10px rgba(225, 29, 72, 0.2);
+}
+
+/* 5.3 Scrollable Content Area */
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: var(--space-6);
+    padding-bottom: 6rem; /* Breathing room for footer */
+    mask-image: linear-gradient(to bottom, black 95%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 95%, transparent 100%);
+}
+
+.sidebar-footer {
+    padding: var(--space-6);
+    background: rgba(255,255,255,0.65);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border-base);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    z-index: 20;
+}
+
+/* ======================================================================================
+   6.0 COMPONENT: FORM ELEMENTS
+   ====================================================================================== */
+/* 6.1 Control Groups (Floating Cards) */
+.control-group {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-base);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: var(--space-6);
+    position: relative;
+    
+    /* Floating Depth */
+    box-shadow: var(--shadow-sm);
+    transition: 
+        transform 0.3s var(--ease-spring), 
+        box-shadow 0.3s var(--ease-out-expo),
+        border-color 0.3s ease;
+}
+
+.control-group:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--slate-300);
+    z-index: 5;
+}
+
+.group-title {
+    font-family: var(--font-display);
+    font-size: 0.7rem; /* Keep label size minimal */
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-5);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0.9;
+}
+
+/* 6.2 Liquid Inputs */
+.glass-input {
+    width: 100%;
+    background-color: var(--bg-input);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem; /* Slightly reduced padding */
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 0.9rem; /* Adjusted for cleaner look */
+    font-weight: 500;
+    line-height: 1.4;
+    
+    /* Inner shadow for engraved look */
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.015);
+    transition: all 0.2s var(--ease-out-expo);
+}
+
+.glass-input:hover {
+    background-color: var(--bg-panel);
+    border-color: var(--slate-300);
+}
+
+.glass-input:focus {
+    background-color: var(--bg-panel);
+    border-color: var(--brand-500);
+    outline: none;
+    box-shadow: 
+        0 0 0 3px rgba(244, 63, 94, 0.15),
+        inset 0 1px 2px rgba(0,0,0,0.01);
+    transform: translateY(-1px);
+}
+
+.glass-input::placeholder {
+    color: var(--text-tertiary);
+    font-weight: 400;
+    opacity: 0.7;
+}
+
+textarea.glass-input {
+    min-height: 100px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+/* 6.3 Labels */
+label {
+    display: block;
+    margin-bottom: var(--space-5);
+    position: relative;
+}
+label:last-child { margin-bottom: 0; }
+
+.label-text {
+    font-size: 0.8rem; /* Reduced label size */
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    letter-spacing: -0.01em;
+}
+
+/* AI Quote Button */
+#btn-quote {
+    font-size: 0.65rem;
+    color: var(--brand-600);
+    font-weight: 700;
+    background: var(--brand-50);
+    padding: 2px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+#btn-quote:hover {
+    background: var(--brand-100);
+    transform: scale(1.05);
+}
+
+/* 6.4 Theme Picker Grid */
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+}
+
+#theme-picker button {
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1px var(--slate-200), var(--shadow-sm);
+    cursor: pointer;
+    transition: transform 0.4s var(--ease-spring);
+    position: relative;
+    overflow: hidden;
+}
+
+#theme-picker button::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    border: 2px solid var(--brand-500);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s var(--ease-out-expo);
+}
+
+#theme-picker button:hover {
+    transform: scale(1.15) rotate(5deg);
+    z-index: 2;
+}
+
+#theme-picker button.active {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px var(--brand-200);
+}
+#theme-picker button.active::after {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* ======================================================================================
+   7.0 COMPONENT: BUTTONS & ACTIONS
+   ===================================================================================== */
+.btn {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.5rem; /* Reduced vertical padding */
+    border-radius: var(--radius-lg);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9rem; /* Adjusted size */
+    cursor: pointer;
+    transition: all 0.3s var(--ease-spring);
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* 7.1 Primary (Brand Liquid) */
+.btn-primary {
+    background: linear-gradient(135deg, var(--brand-600) 0%, var(--brand-500) 100%);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* Top highlight + Brand glow */
+    box-shadow: 
+        0 4px 12px var(--brand-glow),
+        inset 0 1px 0 rgba(255,255,255,0.25);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 12px 24px var(--brand-glow),
+        inset 0 1px 0 rgba(255,255,255,0.35);
+}
+
+.btn-primary:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 4px var(--brand-glow);
+}
+
+/* 7.2 Secondary (Ghost) */
+.btn-secondary {
+    background: var(--bg-panel);
+    color: var(--text-secondary);
+    border: 1px solid var(--slate-200);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+    background: var(--slate-050);
+    color: var(--text-primary);
+    border-color: var(--slate-300);
+    transform: translateY(-1px);
+}
+
+/* 7.3 Icon Buttons */
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    background: transparent;
+    transition: all 0.2s var(--ease-out-expo);
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+.icon-btn:hover {
+    background: var(--slate-100);
+    color: var(--brand-600);
+    border-color: var(--slate-200);
+    transform: rotate(10deg);
+}
+
+/* ======================================================================================
+   8.0 COMPONENT: FEEDBACK SYSTEM
+   ====================================================================================== */
+#toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(40px) scale(0.9);
+    background: var(--slate-900);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.01em;
+    
+    box-shadow: 0 15px 35px -5px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s var(--ease-spring);
+    z-index: 2000;
+    
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+}
+
+/* ======================================================================================
+   9.0 MOBILE RESPONSIVENESS (VIEW SWITCHER)
+   ====================================================================================== */
+
+/* 9.1 View Switcher Components */
+.view-switch {
+    display: none; /* Desktop: Hidden */
+    background: var(--slate-100);
+    border: 1px solid var(--border-base);
+    border-radius: var(--radius-full);
+    padding: 4px;
+    gap: 4px;
+    margin-right: 8px;
+}
+
+.v-btn {
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    transition: all 0.3s var(--ease-spring);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+}
+
+.v-btn.active {
+    background: white;
+    color: var(--brand-600);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    font-weight: 700;
+}
+
+/* 9.2 Mobile Logic */
+@media (max-width: 1024px) {
+    /* Main Layout Reset */
+    .app-container {
+        display: block;
+        height: auto;
+        min-height: 100vh;
+        overflow-y: visible; /* CRITICAL: Enables native scrolling */
+        padding-bottom: 2rem;
+    }
+
+    /* Sidebar Reset */
+    .sidebar {
+        width: 100%;
+        height: auto;
+        min-height: 100vh;
+        border-right: none;
+        box-shadow: none;
+        background: transparent;
+        backdrop-filter: none;
+        position: static;
+        transform: none;
+    }
+
+    /* Sticky Header */
+    .sidebar-header {
+        position: sticky;
+        top: 0;
+        z-index: 500;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 1px 0 var(--border-base), 0 4px 12px rgba(0,0,0,0.02);
+    }
+    
+    .view-switch { display: flex; }
+
+    /* Content Flow */
+    .sidebar-content {
+        padding: 1.5rem;
+        overflow: visible;
+        padding-bottom: 2rem;
+        mask-image: none;
+    }
+    .control-group {
+        background: rgba(255,255,255,0.9);
+    }
+
+    /* 9.3 TOGGLE LOGIC */
+    
+    /* EDIT MODE: Hide Preview */
+    body.mode-edit .preview-stage { 
+        display: none !important; 
+    }
+
+    /* PREVIEW MODE: Hide Editor */
+    body.mode-preview .sidebar-content,
+    body.mode-preview .sidebar-footer { 
+        display: none !important; 
+    }
+    
+    /* Collapse sidebar to just header */
+    body.mode-preview .sidebar {
+        min-height: 0;
+    }
+    
+    /* Adjust Container */
+    body.mode-preview .app-container {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    body.mode-preview .sidebar-header {
+        background: rgba(255,255,255,0.85);
+    }
+}
+
+/* ======================================================================================
+   10.0 DARK MODE OVERRIDES (MIDNIGHT THEME)
+   ====================================================================================== */
+[data-theme="dark"] {
+    /* --- 10.1 Color Inversion --- */
+    --bg-app:      #020617;
+    --bg-surface:  rgba(15, 23, 42, 0.85);
+    --bg-glass:    rgba(15, 23, 42, 0.7);
+    --bg-panel:    #1e293b;
+    --bg-input:    rgba(30, 41, 59, 0.5);
+
+    --border-glass: rgba(255, 255, 255, 0.08);
+    --border-base:  rgba(255, 255, 255, 0.06);
+    
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-tertiary: #64748b;
+    
+    /* --- 10.2 Lighting Adjustments --- */
+    --shadow-hero: 0 30px 60px -12px rgba(0, 0, 0, 0.8);
+}
+
+[data-theme="dark"] .sidebar-header {
+    background: rgba(15, 23, 42, 0.7);
+}
+
+[data-theme="dark"] .sidebar-footer {
+    background: rgba(15, 23, 42, 0.6);
+}
+
+[data-theme="dark"] .glass-input:hover,
+[data-theme="dark"] .glass-input:focus {
+    background-color: #1e293b;
+    border-color: var(--brand-600);
+}
+
+[data-theme="dark"] .control-group {
+    background: #0f172a; /* Deepest blue/black */
+}
+
+[data-theme="dark"] .view-switch {
+    background: var(--slate-900);
+    border-color: var(--slate-700);
+}
+[data-theme="dark"] .v-btn.active {
+    background: var(--slate-800);
+    color: var(--brand-400);
+}
+
+
