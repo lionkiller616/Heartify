@@ -72,7 +72,7 @@ and smooth micro-interactions.
 
 ## 🚀 Getting Started
 
-1.  open url :- [heartify](https://lionkiller616.github.io/Heartify/)
+1.  open url :- [heartify](https://uxle.github.io/Heartify/)
 
 No build tools or server required.
 
